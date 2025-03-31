@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { Telegraf } = require('telegraf');
 const axios = require('axios');
 const winston = require('winston');
@@ -11,8 +12,12 @@ const logger = winston.createLogger({
   ]
 });
 
-// Bot token
-const API_TOKEN = "7679045226:AAHy0uwWUHZn9BZxsAyEFH33Ma7r74kaRdA"; // Use your own token here
+// Bot token from .env
+const API_TOKEN = process.env.BOT_TOKEN;
+if (!API_TOKEN) {
+  logger.error("Bot token topilmadi! `.env` faylini tekshiring.");
+  process.exit(1);
+}
 
 // Create bot instance
 const bot = new Telegraf(API_TOKEN);
@@ -34,11 +39,11 @@ bot.on('text', async (ctx) => {
     if (response.data && response.data.extract) {
       await ctx.reply(response.data.extract);
     } else {
-      await ctx.reply('bu mavzuga oid maqola topilmadi');
+      await ctx.reply('Bu mavzuga oid maqola topilmadi.');
     }
   } catch (error) {
     logger.error(`Error fetching Wikipedia data: ${error.message}`);
-    await ctx.reply('bu mavzuga oid maqola topilmadi');
+    await ctx.reply('Bu mavzuga oid maqola topilmadi.');
   }
 });
 
@@ -52,11 +57,3 @@ bot.launch().then(() => {
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
-
-
-
-
-
-
-
-// 7679045226:AAHy0uwWUHZn9BZxsAyEFH33Ma7r74kaRdA
